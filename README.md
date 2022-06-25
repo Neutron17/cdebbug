@@ -1,4 +1,4 @@
-# cdebbug - memory debugger in c
+# cdebug - memory debugger in c
 
 this program records every call to malloc and free, it stores the file, function and line of the call. At the end it prints out every call, 
 that has not been freed
