@@ -12,11 +12,12 @@ void func() {
 int main() {
 	meminit();
 	printf("Hello, World!\n");
-	int *x = malloc(sizeof(int));
+	int *x = malloc_m(sizeof(int), "hi");
 	func();
 	func();
 	int *y = malloc(sizeof(int));
-	//free(x);
+	free_m(x, "freed");
 	//free(y);
+	memdb_print(true);
 	return 0;
 }
