@@ -6,15 +6,15 @@ BIN = build
 
 all: build
 
+# run tests
 run:
-	$(CC) test.c -o test -ldebug -Isrc
-	./test
+	$(MAKE) -C tests
 
 build: $(OBJ)
 	$(CC) -fPIC -rdynamic -shared -Lstatic -o $(BIN)/libdebug.so $(OBJ)
 
 clean:
-	rm $(BIN)/* $(OBJ) test libdebug.so
+	rm $(BIN)/* $(OBJ) test
 
 %.o: %.c
-	$(CC) -ggdb -o $@ -c $< $(CCFLAGS)
+	$(CC) -Wall -fPIC -o $@ -c $< $(CCFLAGS)

@@ -5,39 +5,62 @@ that has not been freed
 
 ## Example
 
+More examples are in the `tests/` directory
+
+### tests/test1.c:
 ```c
 #define MEM_DEBUG 1
 
-#include <stdio.h>
-#include "ntr/debug.h"
-
-void func() {
-	char *x = malloc(1);
-	free(x);
-}
+#include <SDL2/SDL.h> // window, renderer
+#include <unistd.h> // sleep
+#include <ntr/debug.h>
 
 int main() {
-	meminit();
-	int *x = malloc(sizeof(int));
-	func();
-	func();
-	int *y = malloc(sizeof(int));
-	//free(x);
-	//free(y);
+	SDL_Init(0);
+	SDL_Window *window = SDL_CreateWindow("title", 0,0, 100,100, 0);
+	memdeb_add_m(window, "sdl window");
+
+	SDL_Renderer *rend = SDL_CreateRenderer(window, 0, 0);
+	memdeb_add_m(rend, "renderer");
+	SDL_RenderPresent(rend);
+
+	memdeb_print(true);
+	sleep(10);
+
+	SDL_DestroyWindow(window);
+	memdeb_mark_freed(window, "freed window");
+	SDL_DestroyRenderer(rend);
+	memdeb_mark_freed(rend, "freed renderer");
+	memdeb_print(true);
+	SDL_Quit();
+	memdeb_destroy();
 	return 0;
 }
 ```
-Output:
+### Output:
 ```
 0: 
-        line: 14
-        file: test.c
+        line: 10
+        file: test1.c
         func: main
         isFreed: 0
-3: 
-        line: 17
-        file: test.c
+        message: sdl window
+1: 
+        line: 13
+        file: test1.c
         func: main
         isFreed: 0
+        message: renderer
+0: 
+        line: 10
+        file: test1.c
+        func: main
+        isFreed: 1
+        message: freed window
+1: 
+        line: 13
+        file: test1.c
+        func: main
+        isFreed: 1
+        message: freed renderer
 ```
-these are the were the unfreed allocations
