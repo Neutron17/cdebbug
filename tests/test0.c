@@ -14,8 +14,8 @@ int main() {
 	func();
 	func();
 	int *y = malloc(sizeof(int));
-	free_m(x, "freed");
-	memdeb_print(true);
+	free(x);
+	memdeb_print();
 	memdeb_destroy();
 	return 0;
 }

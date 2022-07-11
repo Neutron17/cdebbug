@@ -37,7 +37,7 @@ void *ntr_memdeb_realloc(void *buff, size_t sz, const char *file, const char *fu
 	return NULL;
 }
 /** Debug wrapper for 'free()'(stdlib.h) */
-void ntr_memdeb_free(void *buff, const char *file, const char *func, unsigned line, const char *msg) {
+void ntr_memdeb_free(void *buff, const char *file, const char *func, unsigned line) {
 	if(buff == NULL)
 		return;
 	for(unsigned i = 0; i < used; i++) {
@@ -45,8 +45,7 @@ void ntr_memdeb_free(void *buff, const char *file, const char *func, unsigned li
 			memnodes[i].isFreed = true;
 			free((void *) memnodes[i].buff);
 			memnodes[i].buff = NULL;
-			if (msg != NULL)
-				strncpy(memnodes[i].msg, msg, 16);
+			memdeb_mark_freed(buff);
 		}
 	}
 }
@@ -67,18 +66,18 @@ void ntr_memdeb_add(void *buff, const char *file, const char *func, unsigned lin
 	else
 		strncpy(messg, msg, 16);
 	memnodes[used] = (struct DebNode)
-		{ line, messg, fil, fun, buff, false };
+		{ line, false, messg, fil, fun, buff };
 	used++;
 }
 
 struct DebNode memdeb_get_node(void *buff) {
 	if(buff == NULL)
-		return (struct DebNode){ 0, NULL, NULL, NULL, NULL, false };
+		return (struct DebNode){ 0, false, NULL, NULL, NULL, NULL };
 	for(int i = 0; i < used; i++) {
 		if(memnodes[i].buff == buff)
 			return memnodes[i];
 	}
-	return (struct DebNode){ 0, NULL, NULL, NULL, NULL, false };
+	return (struct DebNode){ 0, false, NULL, NULL, NULL, NULL };
 }
 
 struct DebNode *memdeb_get_node_ref(void *buff) {
@@ -91,24 +90,29 @@ struct DebNode *memdeb_get_node_ref(void *buff) {
 	return NULL;
 }
 
-void memdeb_mark_freed(void *buff, const char *msg) {
+void memdeb_mark_freed(void *buff) {
 	if(buff == NULL)
 		return;
 	for(int i = 0; i < used; i++) {
 		if(memnodes[i].buff == buff) {
 			memnodes[i].isFreed = true;
-			strncpy(memnodes[i].msg, msg, 16);
+			free((void *) memnodes[i].file);
+			free((void *) memnodes[i].func);
+			free((void *) memnodes[i].msg);
+			memnodes[i].file = NULL;
+			memnodes[i].func = NULL;
+			memnodes[i].msg = NULL;
 		}
 	}
 }
 
-int memdeb_print(bool all) {
+int memdeb_print() {
 	int ret = 0;
 	for(int i = 0; i < used; i++) {
-		if(!all && memnodes[i].isFreed)
+		if(memnodes[i].isFreed)
 			continue;
-		printf("%d: \n\tline: %d\n\tfile: %s\n\tfunc: %s\n\tisFreed: %d\n\tmessage: %s\n",
-			   i, memnodes[i].line, memnodes[i].file, memnodes[i].func, memnodes[i].isFreed, memnodes[i].msg);
+		printf("%d: \n\tline: %d\n\tisFreed: %d\n\tfile: %s\n\tfunc: %s\n\tmessage: %s\n",
+			   i, memnodes[i].line, memnodes[i].isFreed, memnodes[i].file, memnodes[i].func, memnodes[i].msg);
 		ret++;
 	}
 	return ret;
@@ -116,6 +120,8 @@ int memdeb_print(bool all) {
 
 void memdeb_destroy() {
 	for(int i = 0; i < used; i++) {
+		if(memnodes[i].isFreed)
+			continue;
 		free((void *) memnodes[i].file);
 		free((void *) memnodes[i].func);
 		free((void *) memnodes[i].msg);

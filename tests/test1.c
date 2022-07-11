@@ -13,14 +13,14 @@ int main() {
 	memdeb_add_m(rend, "renderer");
 	SDL_RenderPresent(rend);
 
-	memdeb_print(true);
+	memdeb_print();
 	sleep(10);
 
 	SDL_DestroyWindow(window);
-	memdeb_mark_freed(window, "freed window");
+	memdeb_mark_freed(window);
 	SDL_DestroyRenderer(rend);
-	memdeb_mark_freed(rend, "freed renderer");
-	memdeb_print(true);
+	memdeb_mark_freed(rend);
+	memdeb_print();
 	SDL_Quit();
 	memdeb_destroy();
 	return 0;
