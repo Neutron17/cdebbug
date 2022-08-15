@@ -1,7 +1,18 @@
 # cdebug - memory debugger in c
 
-this program records every call to malloc and free, it stores the file, function and line of the call. At the end it prints out every call, 
-that has not been freed
+this program records every call to malloc and free, it stores the file, function and line of the call. At the end it prints out every call, that has not been freed
+
+## Installation
+
+### Linux
+
+```
+sudo make install
+```
+
+### Windows
+
+not supported lol
 
 ## Example
 
@@ -39,25 +50,25 @@ int main() {
 ```
 ### Output:
 ```
-0: 
+0:
         line: 10
         file: test1.c
         func: main
         isFreed: 0
         message: sdl window
-1: 
+1:
         line: 13
         file: test1.c
         func: main
         isFreed: 0
         message: renderer
-0: 
+0:
         line: 10
         file: test1.c
         func: main
         isFreed: 1
         message: freed window
-1: 
+1:
         line: 13
         file: test1.c
         func: main
