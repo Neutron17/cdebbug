@@ -11,8 +11,8 @@ struct DebNode {
 	const char *func;
 	const void *buff;
 };
-void ntr_memdeb_init();
-void memdeb_destroy();
+void ntr_memdeb_init(int _size);
+void ntr_memdeb_destroy();
 
 void *ntr_memdeb_malloc(size_t sz, const char *file, const char *func, unsigned line, const char *msg);
 void *ntr_memdeb_realloc(void *buff, size_t sz, const char *file, const char *func, unsigned line, const char *msg);
@@ -27,6 +27,8 @@ void ntr_memdeb_free(void *buff, const char *file, const char *func, unsigned li
 int memdeb_print();
 
 #ifdef MEM_DEBUG
+#define memdeb_init(S) ntr_memdeb_init(S)
+#define memdeb_destroy ntr_memdeb_destroy
 
 #define malloc(S) ntr_memdeb_malloc(S, __FILE__, __func__, __LINE__, NULL)
 #define malloc_m(S, M) ntr_memdeb_malloc(S, __FILE__, __func__, __LINE__, M)

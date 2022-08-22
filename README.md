@@ -1,5 +1,7 @@
 # cdebug - memory debugger in c
 
+# WARNING: this probably leaks a bunch of memory, at least valgind says so, use at own risk
+
 this program records every call to malloc and free, it stores the file, function and line of the call. At the end it prints out every call, that has not been freed
 
 ## Installation

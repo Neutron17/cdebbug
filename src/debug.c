@@ -10,13 +10,16 @@ bool inited = false;
 
 /** Initialize global variables 'memnodes' and 'used'
  *  When successful sets 'inited' true */
-void meminit() {
-	memnodes = malloc(sizeof(struct DebNode) * 10);
+void ntr_memdeb_init(int _size) {
+	if(_size < 1)
+		size = 10;
+	else
+		size = _size;
+	memnodes = malloc(sizeof(struct DebNode) * size);
 	if(!memnodes) {
 		fprintf(stderr, "Couldn't allocate memory for ntr memory debugger: %s\n", strerror(errno));
 		exit(1);
 	}
-	size = 5;
 	inited = true;
 }
 /** Debug wrapper for 'malloc'(stdlib.h) */
@@ -52,7 +55,7 @@ void ntr_memdeb_free(void *buff, const char *file, const char *func, unsigned li
 /** Add pointer to 'memnodes'. For example: 'SDL_Init()' -> 'SDL_Quit()' and 'calloc()' */
 void ntr_memdeb_add(void *buff, const char *file, const char *func, unsigned line, const char *msg) {
 	if(!inited)
-		meminit();
+		ntr_memdeb_init(-1);
 	if(used == size)
 		memnodes = realloc(memnodes, size * 2);
 	//void *buff = malloc(sz);
@@ -107,6 +110,7 @@ void memdeb_mark_freed(void *buff) {
 }
 
 int memdeb_print() {
+	puts("MemDebug");
 	int ret = 0;
 	for(int i = 0; i < used; i++) {
 		if(memnodes[i].isFreed)
@@ -118,7 +122,7 @@ int memdeb_print() {
 	return ret;
 }
 
-void memdeb_destroy() {
+void ntr_memdeb_destroy() {
 	for(int i = 0; i < used; i++) {
 		if(memnodes[i].isFreed)
 			continue;
